@@ -1,0 +1,77 @@
+# =========================
+# Unreal Engine 5 - C++
+# =========================
+
+# Build folders
+Binaries/
+DerivedDataCache/
+Intermediate/
+Saved/
+
+# Visual Studio
+.vs/
+.vsconfig
+*.sln
+*.VC.db
+*.VC.opendb
+
+# JetBrains IDEs
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# User-specific files
+*.user
+*.userprefs
+*.uprojectdirs
+
+# Generated project files
+*.opensdf
+*.sdf
+*.suo
+
+# Compiled source files
+*.obj
+*.o
+*.exe
+*.dll
+*.lib
+*.app
+
+# Unreal auto-generated files
+*.generated.h
+
+# Crash reports
+CrashReportClient/
+
+# Backup files
+*.bak
+*.tmp
+
+# Rider (por si lo usás en algún momento)
+.idea/
+*.sln.iml
+
+# VSCode (opcional, si no querés subir configs locales)
+.vscode/
+
+# Mac
+*.xcworkspace
+*.xcodeproj
+
+# Linux
+*.kdev4
+
+# =========================
+# IMPORTANT (NO IGNORAR)
+# =========================
+!Source/
+!Content/
+!Config/
+!Plugins/
+!*.uproject

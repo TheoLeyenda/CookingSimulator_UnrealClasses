@@ -1,7 +1,7 @@
 #include "Examples/SBCharacterExample.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
-#include "SBInteractableInterfaceExample.h"
+#include "Examples/SBInteractableInterfaceExample.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 

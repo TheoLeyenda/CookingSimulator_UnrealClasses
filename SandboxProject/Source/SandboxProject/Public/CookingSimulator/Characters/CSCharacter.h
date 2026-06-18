@@ -18,6 +18,9 @@ class SANDBOXPROJECT_API ACSCharacter : public ACharacter
 public:
 	ACSCharacter();
 
+	UFUNCTION(BlueprintCallable)
+	void SetGrabbedActor(ACSGrabbableActor* NewGrabbedActor) { GrabbedActor = NewGrabbedActor; }
+	
 	UFUNCTION(BlueprintPure)
 	ACSGrabbableActor* GetGrabbedActor(){ return GrabbedActor; }
 

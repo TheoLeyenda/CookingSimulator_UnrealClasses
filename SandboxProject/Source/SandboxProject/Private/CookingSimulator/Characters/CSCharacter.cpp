@@ -31,11 +31,6 @@ void ACSCharacter::Movement(const FInputActionValue& Value)
 
 void ACSCharacter::Interact()
 {
-	if(GrabbedActor)
-	{
-		Drop();
-	}
-	
 	FHitResult Hit;
 	FVector Start = GetActorLocation();
 	FVector End = GetActorForwardVector() * SphereInteractDistance + Start;
@@ -65,6 +60,10 @@ void ACSCharacter::Interact()
 			InteractInterface->Interact(this);
 		}
 	}
+	else if(GrabbedActor)
+	{
+		Drop();
+	}
 }
 
 void ACSCharacter::Grab(ACSGrabbableActor* ActorToGrab)
@@ -90,7 +89,7 @@ void ACSCharacter::Grab(ACSGrabbableActor* ActorToGrab)
 		FRotator::ZeroRotator,
 		false,
 		false,
-		0.2,
+		0.2f,
 		false,
 		EMoveComponentAction::Type::Move, LatentActionInfo);
 }

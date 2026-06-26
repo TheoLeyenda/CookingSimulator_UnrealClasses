@@ -25,7 +25,7 @@ void ACSPlayerController::BeginPlay()
 		{
 			if (UEnhancedInputLocalPlayerSubsystem* Subsystem = LocalPlayer->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>())
 			{
-				Subsystem->AddMappingContext(InputMappingContext.Get(), 0);
+				Subsystem->AddMappingContext(DefaultInputMappingContext.Get(), 0);
 			}
 		}
 	}

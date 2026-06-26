@@ -29,7 +29,7 @@ public:
 	UPROPERTY(VisibleAnywhere, Category= "Settings")
 	TObjectPtr<ACSGrabbableActor> PlacedActor;
 
-	virtual void Interact(AActor* Interactor) override;
+	virtual void GrabAndDrop(AActor* Interactor) override;
 
 	UFUNCTION()
 	void OnPlaceActorOnTableDone();

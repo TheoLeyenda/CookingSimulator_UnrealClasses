@@ -3,10 +3,12 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "CookingSimulator/Interfaces/CSInteractable.h"
 #include "GameFramework/Character.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "CSCharacter.generated.h"
 
+class UInputMappingContext;
 class ACSGrabbableActor;
 class UInputAction;
 
@@ -29,14 +31,26 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void Drop();
+
+	UFUNCTION(BlueprintCallable)
+	void SetIsInteracting(bool InNewValue, AActor* InInteractingActor);
 	
 protected:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category= "Settings|Input")
+	TObjectPtr<UInputMappingContext> InteractInputMappingContext = nullptr;
+	
 	UPROPERTY(EditDefaultsOnly, Category= "Settings|Input")
 	TObjectPtr<UInputAction> MovementInputAction = nullptr;
 
 	UPROPERTY(EditDefaultsOnly, Category= "Settings|Input")
-	TObjectPtr<UInputAction> InteractInputAction = nullptr;
+	TObjectPtr<UInputAction> GrabDropInputAction = nullptr;
 
+	UPROPERTY(EditDefaultsOnly, Category= "Settings|Input")
+	TObjectPtr<UInputAction> StartInteractionInputAction = nullptr;
+
+	UPROPERTY(EditDefaultsOnly, Category= "Settings|Input")
+	TObjectPtr<UInputAction> StopInteractionInputAction = nullptr;
+	
 	UPROPERTY(EditDefaultsOnly, Category= "Settings|Interact")
 	float SphereInteractDistance = 90.0f;
 
@@ -63,12 +77,27 @@ protected:
 
 	UPROPERTY()
 	ACSGrabbableActor* GrabbedActor;
+
+	UPROPERTY()
+	AActor* InteractingActor = nullptr;
+	
+	UPROPERTY()
+	bool bIsInteracting = false;
 	
 	UFUNCTION()
 	void Movement(const FInputActionValue& Value);
 
 	UFUNCTION()
-	void Interact();
+	void GrabAndDrop();
+
+	UFUNCTION()
+	void StartInteraction();
+
+	UFUNCTION()
+	void StopInteraction();
+	
+	UFUNCTION()
+	void FindActorToInteract(bool& Result, FHitResult& OutHit);
 	
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 

@@ -18,7 +18,7 @@ ACSTable::ACSTable()
 	ActorPlace->SetRelativeLocation(FVector(0,0, 50));
 }
 
-void ACSTable::Interact(AActor* Interactor)
+void ACSTable::GrabAndDrop(AActor* Interactor)
 {
 	if(auto* Character = Cast<ACSCharacter>(Interactor))
 	{

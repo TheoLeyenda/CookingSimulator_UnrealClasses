@@ -22,8 +22,8 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category= "Components")
 	TObjectPtr<USphereComponent> SphereComponent;
 
-	virtual void Interact(AActor* Interactor) override;
-
+	virtual void GrabAndDrop(AActor* Interactor) override;
+	
 	UFUNCTION(BlueprintCallable)
 	void Drop();
 protected:

@@ -18,8 +18,8 @@ class SANDBOXPROJECT_API ACSPlayerController : public APlayerController
 
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category= "Settings|Input")
-	TObjectPtr<UInputMappingContext> InputMappingContext = nullptr;
-
+	TObjectPtr<UInputMappingContext> DefaultInputMappingContext = nullptr;
+	
 	UPROPERTY(EditAnywhere, Category= "Settings|Camera")
 	FTransform CameraActorTransform;
 	

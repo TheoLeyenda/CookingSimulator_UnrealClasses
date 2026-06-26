@@ -21,7 +21,7 @@ ACSGrabbableActor::ACSGrabbableActor()
 	StaticMeshComponent->SetCollisionEnabled(ECollisionEnabled::Type::NoCollision);
 }
 
-void ACSGrabbableActor::Interact(AActor* Interactor)
+void ACSGrabbableActor::GrabAndDrop(AActor* Interactor)
 {
 	Grab(Cast<ACSCharacter>(Interactor));
 }
@@ -36,12 +36,14 @@ void ACSGrabbableActor::Grab(ACSCharacter* Character)
 	if(!Character->GetGrabbedActor())
 	{
 		SphereComponent->SetSimulatePhysics(false);
+		SphereComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 		Character->Grab(this);
 	}
 }
 
 void ACSGrabbableActor::Drop()
 {
+	SphereComponent->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 	SphereComponent->SetSimulatePhysics(true);
 }
 

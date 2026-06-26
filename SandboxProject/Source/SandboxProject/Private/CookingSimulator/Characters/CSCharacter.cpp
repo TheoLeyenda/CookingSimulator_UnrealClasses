@@ -1,6 +1,7 @@
 #include "CookingSimulator/Characters/CSCharacter.h"
 
 #include "EnhancedInputComponent.h"
+#include "EnhancedInputSubsystems.h"
 #include "Components/CapsuleComponent.h"
 #include "CookingSimulator/Actors/CSGrabbableActor.h"
 #include "CookingSimulator/Interfaces/CSInteractable.h"
@@ -29,16 +30,15 @@ void ACSCharacter::Movement(const FInputActionValue& Value)
 	AddMovementInput(FVector(MovementVector.X, MovementVector.Y, 0), 1);
 }
 
-void ACSCharacter::Interact()
+void ACSCharacter::FindActorToInteract(bool& Result, FHitResult& OutHit)
 {
-	FHitResult Hit;
 	FVector Start = GetActorLocation();
 	FVector End = GetActorForwardVector() * SphereInteractDistance + Start;
 
 	TArray<AActor*> IgnoredActors;
 	IgnoredActors.Add(GrabbedActor);
 	
-	const bool bHit = UKismetSystemLibrary::SphereTraceSingle(
+	Result = UKismetSystemLibrary::SphereTraceSingle(
 		GetWorld(),
 		Start,
 		End,
@@ -47,17 +47,24 @@ void ACSCharacter::Interact()
 		false,
 		IgnoredActors,
 		SphereInteractDebugDrawType,
-		Hit,
+		OutHit,
 		false,
 		SphereInteractLineColor,
 		SphereInteractLineColorHit,
 		SphereInteractDrawTime);
+}
+
+void ACSCharacter::GrabAndDrop()
+{
+	bool bHit;
+	FHitResult Hit;
+	FindActorToInteract(bHit, Hit);
 
 	if(bHit)
 	{
 		if(auto* InteractInterface = Cast<ICSInteractable>(Hit.GetActor()))
 		{
-			InteractInterface->Interact(this);
+			InteractInterface->GrabAndDrop(this);
 		}
 	}
 	else if(GrabbedActor)
@@ -101,7 +108,7 @@ void ACSCharacter::Drop()
 		return;
 	}
 	
-	FDetachmentTransformRules DetachmentTransformRules = FDetachmentTransformRules(FAttachmentTransformRules::KeepRelativeTransform, false);
+	FDetachmentTransformRules DetachmentTransformRules = FDetachmentTransformRules(FAttachmentTransformRules::KeepWorldTransform, false);
 	GrabbedActor->DetachFromActor(DetachmentTransformRules);
 	GrabbedActor->Drop();
 	GrabbedActor = nullptr;
@@ -114,9 +121,77 @@ void ACSCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 	if (UEnhancedInputComponent* EnhancedInput = Cast<UEnhancedInputComponent>(PlayerInputComponent))
     {
     	EnhancedInput->BindAction(MovementInputAction, ETriggerEvent::Triggered,this,&ACSCharacter::Movement);
-		EnhancedInput->BindAction(InteractInputAction, ETriggerEvent::Started, this, &ACSCharacter::Interact);
+		EnhancedInput->BindAction(GrabDropInputAction, ETriggerEvent::Started, this, &ACSCharacter::GrabAndDrop);
+		EnhancedInput->BindAction(StartInteractionInputAction, ETriggerEvent::Started, this, &ACSCharacter::StartInteraction);
+		EnhancedInput->BindAction(StopInteractionInputAction, ETriggerEvent::Started, this, &ACSCharacter::StopInteraction);
     }
 }
 
 void ACSCharacter::OnGrabMoveFinished(){}
+
+void ACSCharacter::StartInteraction()
+{
+	if(bIsInteracting)
+	{
+		StopInteraction();
+	}
+	else
+	{
+		bool bResult;
+		FHitResult Hit;
+		FindActorToInteract(bResult, Hit);
+		if(bResult)
+		{
+			if(auto* InteractInterface = Cast<ICSInteractable>(Hit.GetActor()))
+			{
+				InteractInterface->Interact(this);
+			}
+		}
+	}
+}
+
+void ACSCharacter::StopInteraction()
+{
+	if(auto* InteractInterface = Cast<ICSInteractable>(InteractingActor))
+	{
+		InteractInterface->StopInteraction(this);
+	}
+}
+
+void ACSCharacter::SetIsInteracting(bool InNewValue, AActor* InInteractingActor)
+{
+	if(!InteractInputMappingContext)
+	{
+		return;
+	}
+	bIsInteracting = InNewValue;
+	InteractingActor = nullptr;
+	
+	if(auto* InteractInterface = Cast<ICSInteractable>(InteractingActor))
+	{
+		InteractingActor = InInteractingActor;
+	}
+	
+	if(auto* PC = Cast<APlayerController>(GetController()))
+	{
+		if (ULocalPlayer* LocalPlayer = PC->GetLocalPlayer())
+		{
+			if (UEnhancedInputLocalPlayerSubsystem* Subsystem = LocalPlayer->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>())
+			{
+				if(bIsInteracting)
+				{
+					Subsystem->AddMappingContext(InteractInputMappingContext.Get(),0);
+				}
+				else
+				{
+					Subsystem->RemoveMappingContext(InteractInputMappingContext.Get());
+				}
+			}
+		}
+	}
+	
+}
+
+
+
 

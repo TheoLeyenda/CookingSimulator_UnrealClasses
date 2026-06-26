@@ -14,5 +14,7 @@ class SANDBOXPROJECT_API ICSInteractable
 {
 	GENERATED_BODY()
 public:
-	virtual void Interact(AActor* Interactor) = 0;
+	virtual void GrabAndDrop(AActor* Interactor){};
+	virtual void Interact(AActor* Interactor){};
+	virtual void StopInteraction(AActor* Interactor){};
 };

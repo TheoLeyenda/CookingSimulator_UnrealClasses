@@ -44,7 +44,6 @@ void ACSTableWithSlicingPlace::Tick(float DeltaSeconds)
 
 void ACSTableWithSlicingPlace::Interact(AActor* Interactor)
 {
-	UE_LOG(LogTemp, Warning, TEXT("*** Interact With Table"))
 	Super::Interact(Interactor);
 	
 	if(auto* FoodItem = Cast<ACSFoodItem>(PlacedActor))

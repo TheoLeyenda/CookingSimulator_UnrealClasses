@@ -167,7 +167,7 @@ void ACSCharacter::SetIsInteracting(bool InNewValue, AActor* InInteractingActor)
 	bIsInteracting = InNewValue;
 	InteractingActor = nullptr;
 	
-	if(auto* InteractInterface = Cast<ICSInteractable>(InteractingActor))
+	if(auto* InteractInterface = Cast<ICSInteractable>(InInteractingActor))
 	{
 		InteractingActor = InInteractingActor;
 	}
@@ -189,7 +189,6 @@ void ACSCharacter::SetIsInteracting(bool InNewValue, AActor* InInteractingActor)
 			}
 		}
 	}
-	
 }
 
 

@@ -1,22 +1,22 @@
 #include "CookingSimulator/Actors/CSGrabbableActor.h"
-#include "Components/SphereComponent.h"
+#include "Components/BoxComponent.h"
 #include "CookingSimulator/Characters/CSCharacter.h"
 
 ACSGrabbableActor::ACSGrabbableActor()
 {
 	PrimaryActorTick.bCanEverTick = false;
 
-	SphereComponent = CreateDefaultSubobject<USphereComponent>(TEXT("SphereComponent"));
-	RootComponent = SphereComponent;
+	BoxComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("SphereComponent"));
+	RootComponent = BoxComponent;
 
-	SphereComponent->SetupAttachment(StaticMeshComponent.Get());
-	SphereComponent->SetSphereRadius(21.5f);
-	SphereComponent->SetSimulatePhysics(true);
-	SphereComponent->SetMassOverrideInKg(NAME_None, 100, true);
-	SphereComponent->SetCollisionProfileName("BlockAllDynamic");
+	BoxComponent->SetupAttachment(StaticMeshComponent.Get());
+	BoxComponent->SetBoxExtent(FVector(20.0f));
+	BoxComponent->SetSimulatePhysics(true);
+	BoxComponent->SetMassOverrideInKg(NAME_None, 1000, true);
+	BoxComponent->SetCollisionProfileName("BlockAllDynamic");
 	
 	StaticMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMeshComponent"));
-	StaticMeshComponent->SetupAttachment(SphereComponent.Get());
+	StaticMeshComponent->SetupAttachment(BoxComponent.Get());
 	StaticMeshComponent->SetRelativeScale3D(FVector(0.4f));
 	StaticMeshComponent->SetCollisionEnabled(ECollisionEnabled::Type::NoCollision);
 }
@@ -28,24 +28,40 @@ void ACSGrabbableActor::GrabAndDrop(AActor* Interactor)
 
 void ACSGrabbableActor::Grab(ACSCharacter* Character)
 {
-	if(!Character)
+	if(CanBeGrabbed(Character))
 	{
-		return;
-	}
-	
-	if(!Character->GetGrabbedActor())
-	{
-		SphereComponent->SetSimulatePhysics(false);
-		SphereComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		DisablePhysics();
 		Character->Grab(this);
 	}
 }
 
 void ACSGrabbableActor::Drop()
 {
-	SphereComponent->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-	SphereComponent->SetSimulatePhysics(true);
+	EnablePhysics();
 }
 
+bool ACSGrabbableActor::CanBeGrabbed(ACSCharacter* Character) const
+{
+	if(!Character)
+	{
+		return false;
+	}
+	
+	return !Character->GetGrabbedActor();
+}
+
+void ACSGrabbableActor::DisablePhysics()
+{
+	BoxComponent->SetSimulatePhysics(false);
+	BoxComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	StaticMeshComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+}
+
+void ACSGrabbableActor::EnablePhysics()
+{
+	BoxComponent->SetSimulatePhysics(true);
+	BoxComponent->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	StaticMeshComponent->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+}
 
 

@@ -5,8 +5,8 @@
 #include "GameFramework/Actor.h"
 #include "CSGrabbableActor.generated.h"
 
+class UBoxComponent;
 class ACSCharacter;
-class USphereComponent;
 
 UCLASS()
 class SANDBOXPROJECT_API ACSGrabbableActor : public AActor, public ICSInteractable
@@ -20,13 +20,17 @@ public:
 	TObjectPtr<UStaticMeshComponent> StaticMeshComponent;
 
 	UPROPERTY(EditDefaultsOnly, Category= "Components")
-	TObjectPtr<USphereComponent> SphereComponent;
+	TObjectPtr<UBoxComponent> BoxComponent;
 
 	virtual void GrabAndDrop(AActor* Interactor) override;
+	virtual bool CanBeGrabbed(ACSCharacter* Character) const;
+
+	void DisablePhysics();
+	void EnablePhysics();
 	
 	UFUNCTION(BlueprintCallable)
 	void Drop();
-protected:
+
 	UFUNCTION(BlueprintCallable)
-	void Grab(ACSCharacter* Character);
+	virtual void Grab(ACSCharacter* Character);
 };

@@ -24,37 +24,52 @@ void ACSTable::GrabAndDrop(AActor* Interactor)
 	{
 		if(!Character->GetGrabbedActor())
 		{
-			Character->Grab(PlacedActor.Get());
-			PlacedActor = nullptr;
+			Grab(Character);
 			return;
 		}
 		
 		if(!PlacedActor)
 		{
-			PlacedActor = Character->GetGrabbedActor();
-			FAttachmentTransformRules AttachmentTransformRules = FAttachmentTransformRules(EAttachmentRule::KeepWorld, true);
-			PlacedActor->AttachToComponent(ActorPlace.Get(), AttachmentTransformRules);
-
-			FLatentActionInfo LatentActionInfo;
-			LatentActionInfo.CallbackTarget = this;
-			LatentActionInfo.ExecutionFunction = FName("OnPlaceActorOnTableDone");
-			LatentActionInfo.Linkage = 0;
-			LatentActionInfo.UUID = 1;
-
-			UKismetSystemLibrary::MoveComponentTo(
-				PlacedActor->GetRootComponent(),
-				FVector::ZeroVector,
-				FRotator::ZeroRotator,
-				false,
-				false,
-				0.2f,
-				false,
-				EMoveComponentAction::Type::Move,
-				LatentActionInfo);
-
-			Character->SetGrabbedActor(nullptr);
+			Place(Character);
+		}
+		else
+		{
+			PlacedActor->Grab(Character);
+			PlacedActor = nullptr;
 		}
 	}
+}
+
+void ACSTable::Grab(ACSCharacter* Character)
+{
+	Character->Grab(PlacedActor.Get());
+	PlacedActor = nullptr;
+}
+
+void ACSTable::Place(ACSCharacter* Character)
+{
+	PlacedActor = Character->GetGrabbedActor();
+	FAttachmentTransformRules AttachmentTransformRules = FAttachmentTransformRules(EAttachmentRule::KeepWorld, true);
+	PlacedActor->AttachToComponent(ActorPlace.Get(), AttachmentTransformRules);
+
+	FLatentActionInfo LatentActionInfo;
+	LatentActionInfo.CallbackTarget = this;
+	LatentActionInfo.ExecutionFunction = FName("OnPlaceActorOnTableDone");
+	LatentActionInfo.Linkage = 0;
+	LatentActionInfo.UUID = 1;
+
+	UKismetSystemLibrary::MoveComponentTo(
+		PlacedActor->GetRootComponent(),
+		FVector::ZeroVector,
+		FRotator::ZeroRotator,
+		false,
+		false,
+		0.2f,
+		false,
+		EMoveComponentAction::Type::Move,
+		LatentActionInfo);
+
+	Character->SetGrabbedActor(nullptr);
 }
 
 void ACSTable::OnPlaceActorOnTableDone(){}

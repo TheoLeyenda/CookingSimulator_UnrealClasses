@@ -37,6 +37,9 @@ public:
 
 	UFUNCTION(BlueprintPure)
 	bool CanBeSliced();
+
+	virtual bool CanBeGrabbed(ACSCharacter* Character) const override;
+	virtual void Grab(ACSCharacter* Character) override;
 	
 protected:
 	UPROPERTY()

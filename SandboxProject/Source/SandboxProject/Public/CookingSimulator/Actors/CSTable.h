@@ -7,6 +7,7 @@
 #include "GameFramework/Actor.h"
 #include "CSTable.generated.h"
 
+class ACSCharacter;
 class ACSGrabbableActor;
 
 UCLASS()
@@ -33,4 +34,7 @@ public:
 
 	UFUNCTION()
 	void OnPlaceActorOnTableDone();
+
+	void Grab(ACSCharacter* Character);
+	void Place(ACSCharacter* Character);
 };

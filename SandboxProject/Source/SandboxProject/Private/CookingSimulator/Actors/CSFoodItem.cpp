@@ -1,4 +1,6 @@
 #include "CookingSimulator/Actors/CSFoodItem.h"
+#include "CookingSimulator/Actors/CSDish.h"
+#include "CookingSimulator/Characters/CSCharacter.h"
 
 void ACSFoodItem::SetState(ECSFoodItemState NewState)
 {
@@ -35,4 +37,46 @@ bool ACSFoodItem::CanBeSliced()
 	}
 
 	return bIsSlicable && StateCondition;
+}
+
+bool ACSFoodItem::CanBeGrabbed(ACSCharacter* Character) const
+{
+	if(!Character)
+	{
+		return false;
+	}
+	
+	AActor* GrabbedActor = Character->GetGrabbedActor();
+	if(!GrabbedActor)
+	{
+		return true;
+	}
+
+	if(auto* Dish = Cast<ACSDish>(GrabbedActor))
+	{
+		return Dish->HasPlace();
+	}
+	
+	return false;
+}
+
+void ACSFoodItem::Grab(ACSCharacter* Character)
+{
+	if(!Character)
+	{
+		return;
+	}
+	
+	DisablePhysics();
+	if(auto* GrabbedActor = Character->GetGrabbedActor())
+	{
+		if(auto* DishInterface = Cast<ICSDishInterface>(GrabbedActor))
+		{
+			DishInterface->AddItem(this);
+		}
+	}
+	else
+	{
+		Character->Grab(this);
+	}
 }

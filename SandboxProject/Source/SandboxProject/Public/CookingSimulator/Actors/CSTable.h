@@ -35,6 +35,6 @@ public:
 	UFUNCTION()
 	void OnPlaceActorOnTableDone();
 
-	void Grab(ACSCharacter* Character);
-	void Place(ACSCharacter* Character);
+	virtual void Grab(ACSCharacter* Character);
+	virtual void Place(ACSCharacter* Character);
 };

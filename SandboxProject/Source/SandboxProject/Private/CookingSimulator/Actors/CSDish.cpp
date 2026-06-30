@@ -7,7 +7,7 @@
 ACSDish::ACSDish()
 {
 	BoxComponent->SetBoxExtent(FVector(40,40, 20));
-	StaticMeshComponent->SetRelativeScale3D(FVector(2,2, 0.02));
+	StaticMeshComponent->SetRelativeScale3D(FVector(0.9f,0.9f, 0.02));
 
 	FoodPlace = CreateDefaultSubobject<USceneComponent>(TEXT("FoodPlace"));
 	FoodPlace->SetupAttachment(StaticMeshComponent.Get());

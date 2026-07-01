@@ -2,6 +2,7 @@
 
 #include "Components/BoxComponent.h"
 #include "CookingSimulator/Actors/CSFoodItem.h"
+#include "CookingSimulator/Characters/CSCharacter.h"
 #include "Kismet/KismetSystemLibrary.h"
 
 ACSDish::ACSDish()
@@ -44,3 +45,45 @@ void ACSDish::AddItem(ACSFoodItem* FoodItem)
 }
 
 void ACSDish::OnPlaceFoodOnDishDone(){}
+
+bool ACSDish::CanBeGrabbed(ACSCharacter* Character) const
+{
+	if(!Character)
+	{
+		return false;
+	}
+	
+	if(!Character->GetGrabbedActor())
+	{
+		return true;
+	}
+
+	if(auto* FoodItem = Cast<ACSFoodItem>(Character->GetGrabbedActor()))
+	{
+		return HasPlace();
+	}
+
+	return false;
+}
+
+void ACSDish::AddFoodFromCharacter(ACSCharacter* Character)
+{
+	if(!Character)
+	{
+		return;
+	}
+	
+	if(auto* GrabbedActor = Character->GetGrabbedActor())
+	{
+		if(auto* FoodItem = Cast<ACSFoodItem>(GrabbedActor))
+		{
+			AddItem(FoodItem);
+		}
+	}
+}
+
+void ACSDish::Grab(ACSCharacter* Character)
+{
+	AddFoodFromCharacter(Character);
+	Super::Grab(Character);
+}

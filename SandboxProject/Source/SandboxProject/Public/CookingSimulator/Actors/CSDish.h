@@ -31,6 +31,12 @@ public:
 
 	virtual void AddItem(ACSFoodItem* FoodItem) override;
 
+	virtual bool CanBeGrabbed(ACSCharacter* Character) const override;
+
+	virtual void Grab(ACSCharacter* Character) override;
+	
+	void AddFoodFromCharacter(ACSCharacter* Character);
+	
 protected:
 	UFUNCTION()
 	void OnPlaceFoodOnDishDone();

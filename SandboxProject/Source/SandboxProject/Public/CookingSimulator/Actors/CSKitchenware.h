@@ -5,18 +5,18 @@
 #include "CoreMinimal.h"
 #include "CookingSimulator/Actors/CSGrabbableActor.h"
 #include "CookingSimulator/Interfaces/CSDishInterface.h"
-#include "CSDish.generated.h"
+#include "CSKitchenware.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class SANDBOXPROJECT_API ACSDish : public ACSGrabbableActor, public ICSDishInterface
+class SANDBOXPROJECT_API ACSKitchenware : public ACSGrabbableActor, public ICSDishInterface
 {
 	GENERATED_BODY()
 
 public:
-	ACSDish();
+	ACSKitchenware();
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category= "Components")
 	TObjectPtr<USceneComponent> FoodPlace; 

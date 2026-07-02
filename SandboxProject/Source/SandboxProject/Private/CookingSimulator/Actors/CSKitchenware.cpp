@@ -1,11 +1,11 @@
-#include "CookingSimulator/Actors/CSDish.h"
+#include "CookingSimulator/Actors/CSKitchenware.h"
 
 #include "Components/BoxComponent.h"
 #include "CookingSimulator/Actors/CSFoodItem.h"
 #include "CookingSimulator/Characters/CSCharacter.h"
 #include "Kismet/KismetSystemLibrary.h"
 
-ACSDish::ACSDish()
+ACSKitchenware::ACSKitchenware()
 {
 	BoxComponent->SetBoxExtent(FVector(40,40, 20));
 	StaticMeshComponent->SetRelativeScale3D(FVector(0.9f,0.9f, 0.02));
@@ -14,12 +14,12 @@ ACSDish::ACSDish()
 	FoodPlace->SetupAttachment(StaticMeshComponent.Get());
 }
 
-bool ACSDish::HasPlace() const
+bool ACSKitchenware::HasPlace() const
 {
 	return FoodItems.Num() < MaxItemsCount;
 }
 
-void ACSDish::AddItem(ACSFoodItem* FoodItem)
+void ACSKitchenware::AddItem(ACSFoodItem* FoodItem)
 {
 	FoodItems.Add(FoodItem);
 
@@ -44,9 +44,9 @@ void ACSDish::AddItem(ACSFoodItem* FoodItem)
 		LatentActionInfo);
 }
 
-void ACSDish::OnPlaceFoodOnDishDone(){}
+void ACSKitchenware::OnPlaceFoodOnDishDone(){}
 
-bool ACSDish::CanBeGrabbed(ACSCharacter* Character) const
+bool ACSKitchenware::CanBeGrabbed(ACSCharacter* Character) const
 {
 	if(!Character)
 	{
@@ -66,7 +66,7 @@ bool ACSDish::CanBeGrabbed(ACSCharacter* Character) const
 	return false;
 }
 
-void ACSDish::AddFoodFromCharacter(ACSCharacter* Character)
+void ACSKitchenware::AddFoodFromCharacter(ACSCharacter* Character)
 {
 	if(!Character)
 	{
@@ -82,7 +82,7 @@ void ACSDish::AddFoodFromCharacter(ACSCharacter* Character)
 	}
 }
 
-void ACSDish::Grab(ACSCharacter* Character)
+void ACSKitchenware::Grab(ACSCharacter* Character)
 {
 	AddFoodFromCharacter(Character);
 	Super::Grab(Character);

@@ -1,4 +1,4 @@
-#include "CSFoodBox.h"
+#include "CookingSimulator/Actors/CSFoodBox.h"
 
 #include "CookingSimulator/Actors/CSFoodItem.h"
 #include "CookingSimulator/Actors/CSGrabbableActor.h"

@@ -1,5 +1,5 @@
 #include "CookingSimulator/Actors/CSFoodItem.h"
-#include "CookingSimulator/Actors/CSDish.h"
+#include "CookingSimulator/Actors/CSKitchenware.h"
 #include "CookingSimulator/Characters/CSCharacter.h"
 
 void ACSFoodItem::SetState(ECSFoodItemState NewState)
@@ -52,7 +52,7 @@ bool ACSFoodItem::CanBeGrabbed(ACSCharacter* Character) const
 		return true;
 	}
 
-	if(auto* Dish = Cast<ACSDish>(GrabbedActor))
+	if(auto* Dish = Cast<ACSKitchenware>(GrabbedActor))
 	{
 		return Dish->HasPlace();
 	}

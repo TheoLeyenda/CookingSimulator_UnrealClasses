@@ -1,4 +1,4 @@
-#include "CSStove.h"
+#include "CookingSimulator/Actors/CSStove.h"
 #include "CookingSimulator/Interfaces/CSCookwareInterface.h"
 
 void ACSStove::Grab(ACSCharacter* Character)

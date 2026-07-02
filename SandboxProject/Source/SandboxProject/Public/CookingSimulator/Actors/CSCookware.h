@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "CookingSimulator/Actors/CSDish.h"
+#include "CookingSimulator/Actors/CSKitchenware.h"
 #include "CookingSimulator/Interfaces/CSCookwareInterface.h"
 #include "CSCookware.generated.h"
 
@@ -11,7 +11,7 @@
  * 
  */
 UCLASS()
-class SANDBOXPROJECT_API ACSCookware : public ACSDish, public ICSCookwareInterface
+class SANDBOXPROJECT_API ACSCookware : public ACSKitchenware, public ICSCookwareInterface
 {
 	GENERATED_BODY()
 

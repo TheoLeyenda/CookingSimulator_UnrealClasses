@@ -19,6 +19,11 @@ bool ACSKitchenware::HasPlace() const
 	return FoodItems.Num() < MaxItemsCount;
 }
 
+bool ACSKitchenware::IsEmpty() const
+{
+	return FoodItems.IsEmpty();
+}
+
 void ACSKitchenware::AddItem(ACSFoodItem* FoodItem)
 {
 	FoodItems.Add(FoodItem);
@@ -62,7 +67,7 @@ bool ACSKitchenware::CanBeGrabbed(ACSCharacter* Character) const
 	{
 		return HasPlace();
 	}
-
+	
 	return false;
 }
 
@@ -86,4 +91,13 @@ void ACSKitchenware::Grab(ACSCharacter* Character)
 {
 	AddFoodFromCharacter(Character);
 	Super::Grab(Character);
+}
+
+void ACSKitchenware::Destroyed()
+{
+	for (auto Item : FoodItems)
+	{
+		Item->Destroy();
+	}
+	FoodItems.Empty();
 }

@@ -10,29 +10,34 @@ void ACSPlateBox::BeginPlay()
 
 void ACSPlateBox::InitPlates()
 {
+	for(int i = 0; i < DefaultPlatesAmount; i++)
+	{
+		AddPlate();
+	}
+}
+
+void ACSPlateBox::AddPlate()
+{
 	if(auto* World = GetWorld())
 	{
-		for(int i = 0; i < DefaultPlatesAmount; i++)
+		FActorSpawnParameters ActorSpawnParameters;
+		ActorSpawnParameters.Instigator = GetInstigator();
+		ActorSpawnParameters.Owner = this;
+		ActorSpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
+		FVector Location = ActorPlace->GetComponentLocation();
+		Location.Z = Location.Z + (Plates.Num() * PlateHigh);
+		ACSPlate* SpawnedPlate = World->SpawnActor<ACSPlate>(PlateClass, Location, FRotator::ZeroRotator, ActorSpawnParameters);
+		if(!SpawnedPlate)
 		{
-			FActorSpawnParameters ActorSpawnParameters;
-			ActorSpawnParameters.Instigator = GetInstigator();
-			ActorSpawnParameters.Owner = this;
-			ActorSpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-
-			FVector Location = ActorPlace->GetComponentLocation();
-			Location.Z = Location.Z + (i * PlateHigh);
-			ACSPlate* SpawnedPlate = World->SpawnActor<ACSPlate>(PlateClass, Location, FRotator::ZeroRotator, ActorSpawnParameters);
-			if(!SpawnedPlate)
-			{
-				continue;
-			}
-
-			SpawnedPlate->DisablePhysics();
-
-			FAttachmentTransformRules AttachmentTransformRules = FAttachmentTransformRules(EAttachmentRule::KeepWorld, true);
-			SpawnedPlate->AttachToComponent(ActorPlace.Get(), AttachmentTransformRules);
-			Plates.Add(SpawnedPlate);
+			return;
 		}
+
+		SpawnedPlate->DisablePhysics();
+
+		FAttachmentTransformRules AttachmentTransformRules = FAttachmentTransformRules(EAttachmentRule::KeepWorld, true);
+		SpawnedPlate->AttachToComponent(ActorPlace.Get(), AttachmentTransformRules);
+		Plates.Add(SpawnedPlate);
 	}
 }
 

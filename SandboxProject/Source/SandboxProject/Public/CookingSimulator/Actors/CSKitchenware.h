@@ -29,6 +29,8 @@ public:
 	
 	bool HasPlace() const;
 
+	bool IsEmpty() const;
+	
 	virtual void AddItem(ACSFoodItem* FoodItem) override;
 
 	virtual bool CanBeGrabbed(ACSCharacter* Character) const override;
@@ -36,6 +38,8 @@ public:
 	virtual void Grab(ACSCharacter* Character) override;
 	
 	void AddFoodFromCharacter(ACSCharacter* Character);
+
+	virtual void Destroyed() override;
 	
 protected:
 	UFUNCTION()

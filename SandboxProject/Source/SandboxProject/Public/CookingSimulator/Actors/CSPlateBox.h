@@ -33,4 +33,5 @@ protected:
 public:
 	virtual void GrabAndDrop(AActor* Interactor) override;
 	virtual void Grab(ACSCharacter* Character) override;
+	void AddPlate();
 };

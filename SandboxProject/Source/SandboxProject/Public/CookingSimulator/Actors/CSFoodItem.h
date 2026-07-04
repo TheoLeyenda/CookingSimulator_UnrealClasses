@@ -6,12 +6,15 @@
 #include "CookingSimulator/Actors/CSGrabbableActor.h"
 #include "CSFoodItem.generated.h"
 
+class UCSFoodItemDefinition;
+
 UENUM(BlueprintType)
 enum class ECSFoodItemState : uint8
 {
 	Raw,
 	Slicing,
 	Sliced,
+	OnPlate,
 };
 
 UCLASS()
@@ -23,14 +26,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category= "Settings")
 	bool bIsSlicable = true;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category= "Settings")
-	TObjectPtr<UMaterial> RawMat;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category= "Settings")
-	TObjectPtr<UMaterial> SlicedMat;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category= "Settings")
-	TObjectPtr<UMaterial> SlicingMat;
+	void SetFoodItemDefinition(UCSFoodItemDefinition* InFoodItemDefinition);
 	
 	UFUNCTION(BlueprintCallable)
 	void SetState(ECSFoodItemState NewState);
@@ -42,6 +38,9 @@ public:
 	virtual void Grab(ACSCharacter* Character) override;
 	
 protected:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category= "Settings")
+	TObjectPtr<UCSFoodItemDefinition> FoodItemDefinition;
+	
 	UPROPERTY()
 	ECSFoodItemState State;
 };

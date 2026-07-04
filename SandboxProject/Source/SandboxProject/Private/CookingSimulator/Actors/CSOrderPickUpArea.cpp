@@ -1,5 +1,4 @@
 #include "CookingSimulator/Actors/CSOrderPickUpArea.h"
-
 #include "CookingSimulator/Actors/CSPlate.h"
 #include "CookingSimulator/Actors/CSPlateBox.h"
 #include "CookingSimulator/Characters/CSCharacter.h"

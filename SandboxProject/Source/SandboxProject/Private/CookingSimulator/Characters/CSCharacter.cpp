@@ -93,7 +93,7 @@ void ACSCharacter::Grab(ACSGrabbableActor* ActorToGrab)
 	UKismetSystemLibrary::MoveComponentTo(
 		GrabbedActor->GetRootComponent(),
 		FVector::ZeroVector,
-		FRotator::ZeroRotator,
+		FRotator(0,270, 0),
 		false,
 		false,
 		0.2f,

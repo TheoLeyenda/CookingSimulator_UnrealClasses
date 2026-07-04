@@ -1,21 +1,30 @@
 #include "CookingSimulator/Actors/CSFoodItem.h"
 #include "CookingSimulator/Actors/CSKitchenware.h"
+#include "CookingSimulator/Assets/DataAssets/CSFoodItemDefinition.h"
 #include "CookingSimulator/Characters/CSCharacter.h"
 
 void ACSFoodItem::SetState(ECSFoodItemState NewState)
 {
 	State = NewState;
 
+	if(!FoodItemDefinition)
+	{
+		return;
+	}
+	
 	switch (State)
 	{
 	case ECSFoodItemState::Raw:
-		StaticMeshComponent->SetMaterial(0, RawMat.Get());
+		StaticMeshComponent->SetStaticMesh(FoodItemDefinition->DefaultMesh.Get());
 		break;
 	case ECSFoodItemState::Slicing:
-		StaticMeshComponent->SetMaterial(0, SlicingMat.Get());
+		StaticMeshComponent->SetStaticMesh(FoodItemDefinition->HalfSlicedMesh.Get());
 		break;
 	case ECSFoodItemState::Sliced:
-		StaticMeshComponent->SetMaterial(0, SlicedMat.Get());
+		StaticMeshComponent->SetStaticMesh(FoodItemDefinition->SlicedMesh.Get());
+		break;
+	case ECSFoodItemState::OnPlate:
+		StaticMeshComponent->SetStaticMesh(FoodItemDefinition->OnPlateMesh.Get());
 		break;
 	}
 }
@@ -34,6 +43,8 @@ bool ACSFoodItem::CanBeSliced()
 	case ECSFoodItemState::Sliced:
 		StateCondition = false;
 		break;
+	case ECSFoodItemState::OnPlate:
+		StateCondition = false;
 	}
 
 	return bIsSlicable && StateCondition;
@@ -80,3 +91,10 @@ void ACSFoodItem::Grab(ACSCharacter* Character)
 		Character->Grab(this);
 	}
 }
+
+void ACSFoodItem::SetFoodItemDefinition(UCSFoodItemDefinition* InFoodItemDefinition)
+{
+	FoodItemDefinition = InFoodItemDefinition;
+	StaticMeshComponent->SetStaticMesh(FoodItemDefinition ? FoodItemDefinition->DefaultMesh.Get() : nullptr);
+}
+

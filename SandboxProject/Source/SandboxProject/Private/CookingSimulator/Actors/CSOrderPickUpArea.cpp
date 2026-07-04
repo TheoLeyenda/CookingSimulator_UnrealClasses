@@ -39,6 +39,14 @@ void ACSOrderPickUpArea::GrabAndDrop(AActor* Interactor)
 		{
 			if(!Plate->IsEmpty())
 			{
+				if(RecipeForTest->Compare(Plate->GetIngredients()))
+				{
+					UE_LOG(LogTemp, Warning, TEXT("*** Has Ingredients (YES)"))
+				}
+				else
+				{
+					UE_LOG(LogTemp, Warning, TEXT("*** Hasn't Ingredients (NO)"))
+				}
 				Plate->Destroy();
 				Character->SetGrabbedActor(nullptr);
 				if(auto* PlateBox = GetCurrentPlateBox())

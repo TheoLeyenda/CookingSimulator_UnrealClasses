@@ -98,3 +98,14 @@ void ACSFoodItem::SetFoodItemDefinition(UCSFoodItemDefinition* InFoodItemDefinit
 	StaticMeshComponent->SetStaticMesh(FoodItemDefinition ? FoodItemDefinition->DefaultMesh.Get() : nullptr);
 }
 
+UCSFoodItemDefinition* ACSFoodItem::GetFoodItemDefinition() const
+{
+	return FoodItemDefinition.Get();
+}
+
+ECSFoodItemState ACSFoodItem::GetState() const
+{
+	return State;
+}
+
+

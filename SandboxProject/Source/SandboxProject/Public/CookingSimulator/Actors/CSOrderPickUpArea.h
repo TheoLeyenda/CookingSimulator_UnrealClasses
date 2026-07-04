@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "CookingSimulator/Assets/DataAssets/CSRecipeDefinition.h"
 #include "CookingSimulator/Interfaces/CSInteractable.h"
 #include "GameFramework/Actor.h"
 #include "CSOrderPickUpArea.generated.h"
@@ -27,6 +28,9 @@ public:
 	TArray<ACSPlateBox*> AllPlateBoxes;
 	
 protected:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category= "Settings")
+	TObjectPtr<UCSRecipeDefinition> RecipeForTest;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category= "Settings")
 	TObjectPtr<ACSPlateBox> ConnectedPlateBox;
 	

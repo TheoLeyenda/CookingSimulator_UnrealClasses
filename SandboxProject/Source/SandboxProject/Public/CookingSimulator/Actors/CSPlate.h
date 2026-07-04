@@ -2,7 +2,10 @@
 
 #include "CoreMinimal.h"
 #include "CookingSimulator/Actors/CSKitchenware.h"
+#include "CookingSimulator/Data/CSStructsTypes.h"
 #include "CSPlate.generated.h"
+
+class UCSFoodItemDefinition;
 
 UCLASS()
 class SANDBOXPROJECT_API ACSPlate : public ACSKitchenware
@@ -11,4 +14,7 @@ class SANDBOXPROJECT_API ACSPlate : public ACSKitchenware
 
 protected:
 	virtual void AddItem(ACSFoodItem* FoodItem) override;
+
+public:
+	TMap<UCSFoodItemDefinition*, FCSRecipeIngredient> GetIngredients();
 };

@@ -28,9 +28,13 @@ public:
 
 	void SetFoodItemDefinition(UCSFoodItemDefinition* InFoodItemDefinition);
 	
+	UCSFoodItemDefinition* GetFoodItemDefinition() const;
+	
 	UFUNCTION(BlueprintCallable)
 	void SetState(ECSFoodItemState NewState);
 
+	ECSFoodItemState GetState() const;
+	
 	UFUNCTION(BlueprintPure)
 	bool CanBeSliced();
 

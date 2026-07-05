@@ -18,6 +18,8 @@ class SANDBOXPROJECT_API ACSTable : public AActor, public ICSInteractable
 public:	
 	ACSTable();
 
+	virtual void BeginPlay() override;
+	
 	UPROPERTY(EditAnywhere, Category= "Components")
 	TObjectPtr<USceneComponent> Root;
 	
@@ -30,10 +32,12 @@ public:
 	UPROPERTY(VisibleAnywhere, Category= "Settings")
 	TObjectPtr<ACSGrabbableActor> PlacedActor;
 
+	UPROPERTY(EditAnywhere, Category= "Settings")
+	TSubclassOf<ACSGrabbableActor> DefaultPlacedActorClass;
+	
 	virtual void GrabAndDrop(AActor* Interactor) override;
 
-	UFUNCTION()
-	void OnPlaceActorOnTableDone();
+	void AttachActorToPlace(ACSGrabbableActor* ActorToPlace);
 
 	virtual void Grab(ACSCharacter* Character);
 	virtual void Place(ACSCharacter* Character);

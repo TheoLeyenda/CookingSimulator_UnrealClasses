@@ -18,6 +18,24 @@ ACSTable::ACSTable()
 	ActorPlace->SetRelativeLocation(FVector(0,0, 50));
 }
 
+void ACSTable::BeginPlay()
+{
+	Super::BeginPlay();
+
+	if(auto* World = GetWorld())
+	{
+		if(DefaultPlacedActorClass)
+		{
+			FActorSpawnParameters ActorSpawnParameters = FActorSpawnParameters();
+			ActorSpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+			if(auto* SpawnedActor = World->SpawnActor<ACSGrabbableActor>(DefaultPlacedActorClass, ActorPlace->GetComponentTransform(), ActorSpawnParameters))
+			{
+				AttachActorToPlace(SpawnedActor);
+			}
+		}
+	}
+}
+
 bool ACSTable::TryGrab(AActor* Interactor)
 {
 	if(auto* Interactable = Cast<ICSInteractable>(PlacedActor))
@@ -60,30 +78,20 @@ void ACSTable::Grab(ACSCharacter* Character)
 void ACSTable::Place(ACSCharacter* Character)
 {
 	PlacedActor = Character->GetGrabbedActor();
-	FAttachmentTransformRules AttachmentTransformRules = FAttachmentTransformRules(EAttachmentRule::KeepWorld, true);
-	PlacedActor->AttachToComponent(ActorPlace.Get(), AttachmentTransformRules);
-
-	FLatentActionInfo LatentActionInfo;
-	LatentActionInfo.CallbackTarget = this;
-	LatentActionInfo.ExecutionFunction = FName("OnPlaceActorOnTableDone");
-	LatentActionInfo.Linkage = 0;
-	LatentActionInfo.UUID = 1;
-
-	UKismetSystemLibrary::MoveComponentTo(
-		PlacedActor->GetRootComponent(),
-		FVector::ZeroVector,
-		FRotator::ZeroRotator,
-		false,
-		false,
-		0.2f,
-		false,
-		EMoveComponentAction::Type::Move,
-		LatentActionInfo);
-
+	AttachActorToPlace(PlacedActor.Get());
 	Character->SetGrabbedActor(nullptr);
 }
 
-void ACSTable::OnPlaceActorOnTableDone(){}
+void ACSTable::AttachActorToPlace(ACSGrabbableActor* ActorToPlace)
+{
+	PlacedActor = ActorToPlace;
+	PlacedActor->DisablePhysics();
+
+	FAttachmentTransformRules AttachmentTransformRules = FAttachmentTransformRules(EAttachmentRule::KeepWorld, true);
+	PlacedActor->AttachToComponent(ActorPlace.Get(), AttachmentTransformRules);
+	PlacedActor->MoveToPlace();
+}
+
 
 
 

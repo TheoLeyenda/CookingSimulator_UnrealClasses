@@ -83,7 +83,7 @@ void ACSFoodItem::Grab(ACSCharacter* Character)
 	{
 		if(auto* DishInterface = Cast<ICSDishInterface>(GrabbedActor))
 		{
-			DishInterface->AddItem(this);
+			DishInterface->TryAddItem(this);
 		}
 	}
 	else

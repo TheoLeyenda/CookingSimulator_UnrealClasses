@@ -41,26 +41,31 @@ void ACSPlateBox::AddPlate()
 	}
 }
 
-void ACSPlateBox::GrabAndDrop(AActor* Interactor)
+bool ACSPlateBox::TryGrab(AActor* Interactor)
 {
-	if(auto* Character = Cast<ACSCharacter>(Interactor))
+	if(Plates.IsEmpty())
 	{
-		if(Plates.IsEmpty())
-		{
-			return;
-		}
+		return false;
+	}
 
-		ACSPlate* Plate = Plates[Plates.Num() - 1];
-		if(!Plate)
+	if(auto* LastPlate = Plates[Plates.Num() - 1])
+	{
+		if(auto* Interactable = Cast<ICSInteractable>(LastPlate))
 		{
-			return;
-		}
-			
-		if(Plate->CanBeGrabbed(Character))
-		{
-			Grab(Character);
+			if(Interactable->TryGrab(Interactor))
+			{
+				Grab(Cast<ACSCharacter>(Interactor));
+				return true;
+			}
 		}
 	}
+
+	return false;
+}
+
+void ACSPlateBox::GrabAndDrop(AActor* Interactor)
+{
+	TryGrab(Interactor);
 }
 
 void ACSPlateBox::Grab(ACSCharacter* Character)
@@ -75,8 +80,7 @@ void ACSPlateBox::Grab(ACSCharacter* Character)
 	{
 		return;
 	}
-
-	Plate->Grab(Character);
+	
 	Plates.Remove(Plate);
 }
 

@@ -24,7 +24,10 @@ public:
 
 	virtual void GrabAndDrop(AActor* Interactor) override;
 	virtual bool CanBeGrabbed(ACSCharacter* Character) const;
+	virtual bool TryGrab(AActor* Interactor) override;
 
+	virtual void MoveToPlace();
+	
 	void DisablePhysics();
 	void EnablePhysics();
 	
@@ -33,4 +36,7 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	virtual void Grab(ACSCharacter* Character);
+
+	UFUNCTION()
+	void OnFinishMoveToPlace();
 };

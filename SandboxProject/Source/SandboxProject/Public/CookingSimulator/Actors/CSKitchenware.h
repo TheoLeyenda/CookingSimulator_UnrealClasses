@@ -30,18 +30,10 @@ public:
 	bool HasPlace() const;
 
 	bool IsEmpty() const;
-	
-	virtual void AddItem(ACSFoodItem* FoodItem) override;
 
-	virtual bool CanBeGrabbed(ACSCharacter* Character) const override;
-
-	virtual void Grab(ACSCharacter* Character) override;
-	
-	void AddFoodFromCharacter(ACSCharacter* Character);
+	virtual bool TryGrab(AActor* Interactor) override;
+	virtual bool TryAddItem(ACSFoodItem* FoodItem) override;
+	virtual bool TryAddItems(TArray<ACSFoodItem*> InFoodItems) override;
 
 	virtual void Destroyed() override;
-	
-protected:
-	UFUNCTION()
-	void OnPlaceFoodOnDishDone();
 };

@@ -18,13 +18,26 @@ ACSTable::ACSTable()
 	ActorPlace->SetRelativeLocation(FVector(0,0, 50));
 }
 
+bool ACSTable::TryGrab(AActor* Interactor)
+{
+	if(auto* Interactable = Cast<ICSInteractable>(PlacedActor))
+	{
+		if(Interactable->TryGrab(Interactor))
+		{
+			Grab(Cast<ACSCharacter>(Interactor));
+			return true;
+		}
+	}
+	return false;
+}
+
 void ACSTable::GrabAndDrop(AActor* Interactor)
 {
 	if(auto* Character = Cast<ACSCharacter>(Interactor))
 	{
 		if(!Character->GetGrabbedActor())
 		{
-			Grab(Character);
+			TryGrab(Character);
 			return;
 		}
 		
@@ -34,15 +47,13 @@ void ACSTable::GrabAndDrop(AActor* Interactor)
 		}
 		else
 		{
-			PlacedActor->Grab(Character);
-			PlacedActor = nullptr;
+			TryGrab(Character);
 		}
 	}
 }
 
 void ACSTable::Grab(ACSCharacter* Character)
 {
-	Character->Grab(PlacedActor.Get());
 	PlacedActor = nullptr;
 }
 

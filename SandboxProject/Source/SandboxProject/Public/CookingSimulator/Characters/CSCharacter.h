@@ -75,7 +75,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category= "Settings|Components")
 	TObjectPtr<USceneComponent> Hands;
 
-	UPROPERTY()
+	UPROPERTY(VisibleAnywhere)
 	ACSGrabbableActor* GrabbedActor;
 
 	UPROPERTY()

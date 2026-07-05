@@ -18,5 +18,6 @@ class SANDBOXPROJECT_API ICSDishInterface
 	GENERATED_BODY()
 
 public:
-	virtual void AddItem(ACSFoodItem* FoodItem){}
+	virtual bool TryAddItem(ACSFoodItem* FoodItem){ return true; }
+	virtual bool TryAddItems(TArray<ACSFoodItem*> FoodItems) { return true; }
 };

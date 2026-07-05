@@ -23,16 +23,31 @@ ACSGrabbableActor::ACSGrabbableActor()
 
 void ACSGrabbableActor::GrabAndDrop(AActor* Interactor)
 {
-	Grab(Cast<ACSCharacter>(Interactor));
+	TryGrab(Interactor);
+}
+
+bool ACSGrabbableActor::TryGrab(AActor* Interactor)
+{
+	if(auto* Character = Cast<ACSCharacter>(Interactor))
+	{
+		if(CanBeGrabbed(Character))
+		{
+			Grab(Character);
+			return true;
+		}
+	}
+	return false;
 }
 
 void ACSGrabbableActor::Grab(ACSCharacter* Character)
 {
-	if(CanBeGrabbed(Character))
+	if(!Character)
 	{
-		DisablePhysics();
-		Character->Grab(this);
+		return;
 	}
+	
+	DisablePhysics();
+	Character->Grab(this);
 }
 
 void ACSGrabbableActor::Drop()
@@ -46,7 +61,8 @@ bool ACSGrabbableActor::CanBeGrabbed(ACSCharacter* Character) const
 	{
 		return false;
 	}
-	
+
+	UE_LOG(LogTemp, Warning, TEXT("*** CanBeGrabbed: %s"), !Character->GetGrabbedActor() ? *FString("*** True") : *FString("*** False"))
 	return !Character->GetGrabbedActor();
 }
 
@@ -64,4 +80,24 @@ void ACSGrabbableActor::EnablePhysics()
 	StaticMeshComponent->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 }
 
+void ACSGrabbableActor::MoveToPlace()
+{
+	FLatentActionInfo LatentActionInfo;
+	LatentActionInfo.CallbackTarget = this;
+	LatentActionInfo.ExecutionFunction = FName("OnFinishMoveToPlace");
+	LatentActionInfo.Linkage = 0;
+	LatentActionInfo.UUID = 1;
+
+	UKismetSystemLibrary::MoveComponentTo(
+		GetRootComponent(),
+		FVector::ZeroVector,
+		FRotator(0,270, 0),
+		false,
+		false,
+		0.2f,
+		false,
+		EMoveComponentAction::Type::Move, LatentActionInfo);
+}
+
+void ACSGrabbableActor::OnFinishMoveToPlace(){}
 

@@ -1,15 +1,15 @@
 #include "CookingSimulator/Actors/CSPlate.h"
 #include "CookingSimulator/Actors/CSFoodItem.h"
 
-void ACSPlate::AddItem(ACSFoodItem* FoodItem)
+bool ACSPlate::TryAddItem(ACSFoodItem* FoodItem)
 {
-	Super::AddItem(FoodItem);
-	if(!FoodItem)
+	if(Super::TryAddItem(FoodItem))
 	{
-		return;
+		FoodItem->SetState(ECSFoodItemState::OnPlate);
+		return true;
 	}
 
-	FoodItem->SetState(ECSFoodItemState::OnPlate);
+	return false;
 }
 
 TMap<UCSFoodItemDefinition*, FCSRecipeIngredient> ACSPlate::GetIngredients()

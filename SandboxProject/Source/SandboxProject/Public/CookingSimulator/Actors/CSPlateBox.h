@@ -31,6 +31,7 @@ protected:
 	void InitPlates();
 
 public:
+	virtual bool TryGrab(AActor* Interactor) override;
 	virtual void GrabAndDrop(AActor* Interactor) override;
 	virtual void Grab(ACSCharacter* Character) override;
 	void AddPlate();

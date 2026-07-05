@@ -37,4 +37,5 @@ public:
 
 	virtual void Grab(ACSCharacter* Character);
 	virtual void Place(ACSCharacter* Character);
+	virtual bool TryGrab(AActor* Interactor) override;
 };

@@ -24,73 +24,70 @@ bool ACSKitchenware::IsEmpty() const
 	return FoodItems.IsEmpty();
 }
 
-void ACSKitchenware::AddItem(ACSFoodItem* FoodItem)
+bool ACSKitchenware::TryAddItem(ACSFoodItem* FoodItem)
 {
-	FoodItems.Add(FoodItem);
+	if(HasPlace())
+	{
+		FoodItems.Add(FoodItem);
 
-	FAttachmentTransformRules AttachmentTransformRules = FAttachmentTransformRules(EAttachmentRule::KeepWorld, true);
-	FoodItem->AttachToComponent(FoodPlace.Get(), AttachmentTransformRules);
+		FAttachmentTransformRules AttachmentTransformRules = FAttachmentTransformRules(EAttachmentRule::KeepWorld, true);
+		FoodItem->AttachToComponent(FoodPlace.Get(), AttachmentTransformRules);
+		FoodItem->MoveToPlace();
+		return true;
+	}
 
-	FLatentActionInfo LatentActionInfo;
-	LatentActionInfo.CallbackTarget = this;
-	LatentActionInfo.ExecutionFunction = FName("OnPlaceFoodOnDishDone");
-	LatentActionInfo.Linkage = 0;
-	LatentActionInfo.UUID = 1;
-
-	UKismetSystemLibrary::MoveComponentTo(
-		FoodItem->GetRootComponent(),
-		FVector::ZeroVector,
-		FRotator::ZeroRotator,
-		false,
-		false,
-		0.2f,
-		false,
-		EMoveComponentAction::Type::Move,
-		LatentActionInfo);
+	return false;
 }
 
-void ACSKitchenware::OnPlaceFoodOnDishDone(){}
-
-bool ACSKitchenware::CanBeGrabbed(ACSCharacter* Character) const
+bool ACSKitchenware::TryGrab(AActor* Interactor)
 {
-	if(!Character)
-	{
-		return false;
-	}
-	
-	if(!Character->GetGrabbedActor())
+	if(Super::TryGrab(Interactor))
 	{
 		return true;
 	}
 
-	if(auto* FoodItem = Cast<ACSFoodItem>(Character->GetGrabbedActor()))
+	if(auto* Character = Cast<ACSCharacter>(Interactor))
 	{
-		return HasPlace();
+		if(auto* FoodItem = Cast<ACSFoodItem>(Character->GetGrabbedActor()))
+		{
+			if(TryAddItem(FoodItem))
+			{
+				Grab(Character);
+				return true;
+			}
+		}
+		else if(auto* CharacterKitchenware = Cast<ACSKitchenware>(Character->GetGrabbedActor()))
+		{
+			if(IsEmpty())
+			{
+				if(TryAddItems(CharacterKitchenware->FoodItems))
+				{
+					CharacterKitchenware->FoodItems.Empty();
+				}
+				return false;
+			}
+			if(CharacterKitchenware->TryAddItems(FoodItems))
+			{
+				FoodItems.Empty();
+			}
+			return false;
+		}
 	}
-	
+
 	return false;
 }
 
-void ACSKitchenware::AddFoodFromCharacter(ACSCharacter* Character)
+bool ACSKitchenware::TryAddItems(TArray<ACSFoodItem*> InFoodItems)
 {
-	if(!Character)
+	if(InFoodItems.Num() <= MaxItemsCount - FoodItems.Num())
 	{
-		return;
-	}
-	
-	if(auto* GrabbedActor = Character->GetGrabbedActor())
-	{
-		if(auto* FoodItem = Cast<ACSFoodItem>(GrabbedActor))
+		for (auto Element : InFoodItems)
 		{
-			AddItem(FoodItem);
+			TryAddItem(Element);
 		}
+		return true;
 	}
-}
-
-void ACSKitchenware::Grab(ACSCharacter* Character)
-{
-	AddFoodFromCharacter(Character);
-	Super::Grab(Character);
+	return false;
 }
 
 void ACSKitchenware::Destroyed()

@@ -6,6 +6,15 @@
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMaterialLibrary.h"
 
+ACSFoodBox::ACSFoodBox()
+{
+	FoodCartel = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("FoodCartel"));
+	FoodCartel->SetupAttachment(StaticMeshComponent.Get());
+	FoodCartel->SetRelativeLocation(FVector(50.5f,0.0f,0.0f));
+	FoodCartel->SetRelativeRotation(FRotator(90.0f,0.0f, 90.0f));
+	FoodCartel->SetRelativeScale3D(FVector(0.7f));
+}
+
 void ACSFoodBox::BeginPlay()
 {
 	Super::BeginPlay();
@@ -57,7 +66,7 @@ void ACSFoodBox::UpdateMaterial()
 	UMaterialInstanceDynamic* MaterialInstanceDynamic = UKismetMaterialLibrary::CreateDynamicMaterialInstance(GetWorld(), FoodMaterial.Get());
 	MaterialInstanceDynamic->SetTextureParameterValue("Icon", FoodItemDefinition->Icon.Get());
 
-	StaticMeshComponent->SetMaterial(0, MaterialInstanceDynamic);
+	FoodCartel->SetMaterial(0, MaterialInstanceDynamic);
 }
 
 #if WITH_EDITOR

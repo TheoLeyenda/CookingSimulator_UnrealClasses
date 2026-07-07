@@ -26,12 +26,22 @@ public:
 protected:
 	UPROPERTY(EditAnywhere, Category= "Settings|Debug")
 	bool bShowProgress = false;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category= "Settings")
 	float SlicingSpeed = 0.25f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category= "Settings")
+	TObjectPtr<UStaticMeshComponent> SlicingPlaceMesh;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category= "Settings")
+	TObjectPtr<UStaticMeshComponent> KnifeMesh;
+	
 	UPROPERTY()
 	float Progress = 0;
+	
 	UPROPERTY()
 	bool bIsInteracting = false;
+	
 	UPROPERTY()
 	TObjectPtr<AActor> CurrentInteractor = nullptr;
 };

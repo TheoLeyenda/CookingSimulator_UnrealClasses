@@ -87,11 +87,8 @@ void ACSTable::AttachActorToPlace(ACSGrabbableActor* ActorToPlace)
 	PlacedActor = ActorToPlace;
 	PlacedActor->DisablePhysics();
 
-	FAttachmentTransformRules AttachmentTransformRules = FAttachmentTransformRules(EAttachmentRule::KeepWorld, true);
+	FAttachmentTransformRules AttachmentTransformRules =
+		FAttachmentTransformRules(EAttachmentRule::KeepWorld, true);
 	PlacedActor->AttachToComponent(ActorPlace.Get(), AttachmentTransformRules);
 	PlacedActor->MoveToPlace();
 }
-
-
-
-

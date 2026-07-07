@@ -8,6 +8,12 @@ ACSTableWithSlicingPlace::ACSTableWithSlicingPlace()
 {
 	PrimaryActorTick.bCanEverTick = true;
 	SpawnCollisionHandlingMethod = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
+	SlicingPlaceMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("SlicingPlaceMesh"));
+	SlicingPlaceMesh->SetupAttachment(StaticMeshComponent.Get());
+	
+	KnifeMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("KnifeMesh"));
+	KnifeMesh->SetupAttachment(StaticMeshComponent.Get());
 }
 
 void ACSTableWithSlicingPlace::GrabAndDrop(AActor* Interactor)

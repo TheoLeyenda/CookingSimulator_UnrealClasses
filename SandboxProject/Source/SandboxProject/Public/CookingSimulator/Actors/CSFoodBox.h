@@ -13,6 +13,7 @@ class SANDBOXPROJECT_API ACSFoodBox : public ACSTable
 	GENERATED_BODY()
 
 public:
+	ACSFoodBox();
 	virtual void BeginPlay() override;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category= "Settings")
@@ -23,6 +24,9 @@ public:
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category= "Settings")
 	TObjectPtr<UMaterialInterface> FoodMaterial;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category= "Components")
+	TObjectPtr<UStaticMeshComponent> FoodCartel;
 	
 	virtual void GrabAndDrop(AActor* Interactor) override;
 

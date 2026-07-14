@@ -25,6 +25,11 @@ void ACSFoodBox::BeginPlay()
 
 void ACSFoodBox::GrabAndDrop(AActor* Interactor)
 {
+	if(!FoodItemDefinition)
+	{
+		return;
+	}
+	
 	if(auto* Character = Cast<ACSCharacter>(Interactor))
 	{
 		if(PlacedActor)
@@ -45,7 +50,7 @@ void ACSFoodBox::GrabAndDrop(AActor* Interactor)
 			ActorSpawnParameters.Instigator = GetInstigator();
 			ActorSpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 			
-			ACSFoodItem* FoodItem = GetWorld()->SpawnActor<ACSFoodItem>(FoodItemClass, GetActorTransform(), ActorSpawnParameters);
+			ACSFoodItem* FoodItem = GetWorld()->SpawnActor<ACSFoodItem>(FoodItemDefinition->FoodItemClass, GetActorTransform(), ActorSpawnParameters);
 			if(FoodItem)
 			{
 				FoodItem->bIsSlicable = true;

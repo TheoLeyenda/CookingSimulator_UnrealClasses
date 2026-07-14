@@ -26,7 +26,7 @@ public:
 	virtual bool CanBeGrabbed(ACSCharacter* Character) const;
 	virtual bool TryGrab(AActor* Interactor) override;
 
-	virtual void MoveToPlace();
+	virtual void MoveToPlace(FVector TargetRelativeLocation);
 	
 	void DisablePhysics();
 	void EnablePhysics();

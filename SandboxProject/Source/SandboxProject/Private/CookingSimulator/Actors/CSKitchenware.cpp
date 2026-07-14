@@ -3,6 +3,7 @@
 #include "Components/BoxComponent.h"
 #include "CookingSimulator/Actors/CSFoodItem.h"
 #include "CookingSimulator/Characters/CSCharacter.h"
+#include "CookingSimulator/Components/CSFoodStorageComponent.h"
 #include "Kismet/KismetSystemLibrary.h"
 
 ACSKitchenware::ACSKitchenware()
@@ -12,31 +13,18 @@ ACSKitchenware::ACSKitchenware()
 
 	FoodPlace = CreateDefaultSubobject<USceneComponent>(TEXT("FoodPlace"));
 	FoodPlace->SetupAttachment(StaticMeshComponent.Get());
+
+	FoodStorageComponent = CreateDefaultSubobject<UCSFoodStorageComponent>(TEXT("FoodStorageComponent"));
 }
 
-bool ACSKitchenware::HasPlace() const
+bool ACSKitchenware::HasPlace(int32 NewItemsAmount) const
 {
-	return FoodItems.Num() < MaxItemsCount;
+	return FoodStorageComponent->HasPlace(NewItemsAmount);
 }
 
 bool ACSKitchenware::IsEmpty() const
 {
-	return FoodItems.IsEmpty();
-}
-
-bool ACSKitchenware::TryAddItem(ACSFoodItem* FoodItem)
-{
-	if(HasPlace())
-	{
-		FoodItems.Add(FoodItem);
-
-		FAttachmentTransformRules AttachmentTransformRules = FAttachmentTransformRules(EAttachmentRule::KeepWorld, true);
-		FoodItem->AttachToComponent(FoodPlace.Get(), AttachmentTransformRules);
-		FoodItem->MoveToPlace();
-		return true;
-	}
-
-	return false;
+	return GetFoodItems().IsEmpty();
 }
 
 bool ACSKitchenware::TryGrab(AActor* Interactor)
@@ -60,15 +48,15 @@ bool ACSKitchenware::TryGrab(AActor* Interactor)
 		{
 			if(IsEmpty())
 			{
-				if(TryAddItems(CharacterKitchenware->FoodItems))
+				if(TryAddItems(CharacterKitchenware->GetFoodItems()))
 				{
-					CharacterKitchenware->FoodItems.Empty();
+					CharacterKitchenware->ClearFoodItems();
 				}
 				return false;
 			}
-			if(CharacterKitchenware->TryAddItems(FoodItems))
+			if(CharacterKitchenware->TryAddItems(GetFoodItems()))
 			{
-				FoodItems.Empty();
+				ClearFoodItems();
 			}
 			return false;
 		}
@@ -77,24 +65,76 @@ bool ACSKitchenware::TryGrab(AActor* Interactor)
 	return false;
 }
 
+bool ACSKitchenware::TryAddItem(ACSFoodItem* FoodItem)
+{
+	if(UKismetSystemLibrary::DoesImplementInterface(FoodItem, UCSDishInterface::StaticClass()) && !IsEmpty())
+	{
+		bool bShouldAddToKitchen;
+		bool Added;
+		TryAddItemsToComplex(FoodItem, bShouldAddToKitchen, Added);
+		if(bShouldAddToKitchen)
+		{
+			return FoodStorageComponent->TryAddItem(FoodItem);
+		}
+		return false;
+	}
+	
+	if(FoodStorageComponent->TryAddItem(FoodItem))
+	{
+		AttachFoodItem(FoodItem);
+		return true;
+	}
+	
+
+	return false;
+}
+
 bool ACSKitchenware::TryAddItems(TArray<ACSFoodItem*> InFoodItems)
 {
-	if(InFoodItems.Num() <= MaxItemsCount - FoodItems.Num())
+	if(FoodStorageComponent->TryAddItems(InFoodItems))
 	{
 		for (auto Element : InFoodItems)
 		{
-			TryAddItem(Element);
+			AttachFoodItem(Element);
 		}
 		return true;
 	}
 	return false;
 }
 
+void ACSKitchenware::TryAddItemsToComplex(ACSFoodItem* FoodItem, bool& ShouldAddToKitchen, bool& Added)
+{
+	if(auto* DishInterface = Cast<ICSDishInterface>(FoodItem))
+	{
+		if(DishInterface->TryAddItems(GetFoodItems()))
+		{
+			ClearFoodItems();
+			ShouldAddToKitchen = false;
+			Added = true;
+		}
+	}
+	ShouldAddToKitchen = false;
+	Added = false;
+}
+
+void ACSKitchenware::AttachFoodItem(ACSFoodItem* FoodItem)
+{
+	FAttachmentTransformRules AttachmentTransformRules = FAttachmentTransformRules(EAttachmentRule::KeepWorld, true);
+	FoodItem->AttachToComponent(FoodPlace.Get(), AttachmentTransformRules);
+	FoodItem->MoveToPlace(FVector::ZeroVector);
+}
+
+TArray<ACSFoodItem*>& ACSKitchenware::GetFoodItems() const
+{
+	return FoodStorageComponent->Items;
+}
+
+void ACSKitchenware::ClearFoodItems()
+{
+	FoodStorageComponent->Items.Empty();
+}
+
 void ACSKitchenware::Destroyed()
 {
-	for (auto Item : FoodItems)
-	{
-		Item->Destroy();
-	}
-	FoodItems.Empty();
+	FoodStorageComponent->DestroyItems();
 }

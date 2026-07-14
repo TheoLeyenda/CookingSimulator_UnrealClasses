@@ -4,10 +4,15 @@ void ACSCookware::Cook(bool bEnable)
 {
 	bIsCooking = bEnable;
 
-	if(bIsCooking && FoodItems.Num() > 0)
+	if(bIsCooking && GetFoodItems().Num() > 0)
 	{
 		UpdateCookingProgress();
 	}
+}
+
+void ACSCookware::OnCooked()
+{
+		
 }
 
 void ACSCookware::UpdateCookingProgress()
@@ -15,9 +20,10 @@ void ACSCookware::UpdateCookingProgress()
 	CookingScore++;
 	UE_LOG(LogTemp, Warning, TEXT("*** CookingScore: %d"), CookingScore);
 
-	if(CookingScore >= CookingTargetScorePerItem * FoodItems.Num())
+	if(CookingScore >= CookingTargetScorePerItem * GetFoodItems().Num())
 	{
 		bIsCooking = false;
+		OnCooked();
 	}
 	
 	if(bIsCooking)

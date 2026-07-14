@@ -80,7 +80,7 @@ void ACSGrabbableActor::EnablePhysics()
 	StaticMeshComponent->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 }
 
-void ACSGrabbableActor::MoveToPlace()
+void ACSGrabbableActor::MoveToPlace(FVector TargetRelativeLocation)
 {
 	FLatentActionInfo LatentActionInfo;
 	LatentActionInfo.CallbackTarget = this;
@@ -90,7 +90,7 @@ void ACSGrabbableActor::MoveToPlace()
 
 	UKismetSystemLibrary::MoveComponentTo(
 		GetRootComponent(),
-		FVector::ZeroVector,
+		TargetRelativeLocation,
 		FRotator(0,270, 0),
 		false,
 		false,

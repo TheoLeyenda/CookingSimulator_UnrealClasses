@@ -34,6 +34,9 @@ protected:
 	virtual void Cook(bool bEnable) override;
 
 	UFUNCTION()
+	virtual void OnCooked();
+	
+	UFUNCTION()
 	void UpdateCookingProgress();
 	
 	void SendUpdateCookingProgressTimer();

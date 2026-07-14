@@ -7,24 +7,47 @@ void ACSFoodItem::SetState(ECSFoodItemState NewState)
 {
 	State = NewState;
 
+	SetMeshByState(NewState);
+}
+
+void ACSFoodItem::SetMeshByState(ECSFoodItemState NewState)
+{
 	if(!FoodItemDefinition)
 	{
 		return;
 	}
 	
-	switch (State)
+	switch (NewState)
 	{
 	case ECSFoodItemState::Raw:
-		StaticMeshComponent->SetStaticMesh(FoodItemDefinition->DefaultMesh.Get());
+		if(auto* Mesh = FoodItemDefinition->DefaultMesh.Get())
+		{
+			StaticMeshComponent->SetStaticMesh(Mesh);
+		}
 		break;
 	case ECSFoodItemState::Slicing:
-		StaticMeshComponent->SetStaticMesh(FoodItemDefinition->HalfSlicedMesh.Get());
+		if(auto* Mesh = FoodItemDefinition->HalfSlicedMesh.Get())
+		{
+			StaticMeshComponent->SetStaticMesh(Mesh);
+		}
 		break;
 	case ECSFoodItemState::Sliced:
-		StaticMeshComponent->SetStaticMesh(FoodItemDefinition->SlicedMesh.Get());
+		if(auto* Mesh = FoodItemDefinition->SlicedMesh.Get())
+		{
+			StaticMeshComponent->SetStaticMesh(Mesh);
+		}
 		break;
-	case ECSFoodItemState::OnPlate:
-		StaticMeshComponent->SetStaticMesh(FoodItemDefinition->OnPlateMesh.Get());
+	case ECSFoodItemState::Fried:
+		if(auto* Mesh = FoodItemDefinition->FriedMesh.Get())
+		{
+			StaticMeshComponent->SetStaticMesh(Mesh);
+		}
+		break;
+	case ECSFoodItemState::InBurger:
+		if(auto* Mesh = FoodItemDefinition->InBurgerMesh.Get())
+		{
+			StaticMeshComponent->SetStaticMesh(Mesh);
+		}
 		break;
 	}
 }
@@ -43,31 +66,30 @@ bool ACSFoodItem::CanBeSliced()
 	case ECSFoodItemState::Sliced:
 		StateCondition = false;
 		break;
-	case ECSFoodItemState::OnPlate:
+	case ECSFoodItemState::Fried:
+		StateCondition = false;
+		break;
+	case ECSFoodItemState::InBurger:
 		StateCondition = false;
 	}
 
 	return bIsSlicable && StateCondition;
 }
 
-bool ACSFoodItem::CanBeGrabbed(ACSCharacter* Character) const
+bool ACSFoodItem::TryGrab(AActor* Interactor)
 {
-	if(!Character)
-	{
-		return false;
-	}
-	
-	AActor* GrabbedActor = Character->GetGrabbedActor();
-	if(!GrabbedActor)
+	if(Super::TryGrab(Interactor))
 	{
 		return true;
 	}
-
-	if(auto* Dish = Cast<ACSKitchenware>(GrabbedActor))
+	if(auto* Character = Cast<ACSCharacter>(Interactor))
 	{
-		return Dish->HasPlace();
+		if(auto* DishInterface = Cast<ICSDishInterface>(Character->GetGrabbedActor()))
+		{
+			return DishInterface->TryAddItem(this);
+		}
 	}
-	
+
 	return false;
 }
 
@@ -95,7 +117,7 @@ void ACSFoodItem::Grab(ACSCharacter* Character)
 void ACSFoodItem::SetFoodItemDefinition(UCSFoodItemDefinition* InFoodItemDefinition)
 {
 	FoodItemDefinition = InFoodItemDefinition;
-	StaticMeshComponent->SetStaticMesh(FoodItemDefinition ? FoodItemDefinition->DefaultMesh.Get() : nullptr);
+	SetMeshByState(ECSFoodItemState::Raw);
 }
 
 UCSFoodItemDefinition* ACSFoodItem::GetFoodItemDefinition() const
@@ -107,5 +129,3 @@ ECSFoodItemState ACSFoodItem::GetState() const
 {
 	return State;
 }
-
-

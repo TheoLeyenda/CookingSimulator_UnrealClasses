@@ -14,7 +14,8 @@ enum class ECSFoodItemState : uint8
 	Raw,
 	Slicing,
 	Sliced,
-	OnPlate,
+	Fried,
+	InBurger,
 };
 
 UCLASS()
@@ -25,20 +26,20 @@ class SANDBOXPROJECT_API ACSFoodItem : public ACSGrabbableActor
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category= "Settings")
 	bool bIsSlicable = true;
-
+	
 	void SetFoodItemDefinition(UCSFoodItemDefinition* InFoodItemDefinition);
 	
 	UCSFoodItemDefinition* GetFoodItemDefinition() const;
 	
 	UFUNCTION(BlueprintCallable)
 	void SetState(ECSFoodItemState NewState);
-
+	
 	ECSFoodItemState GetState() const;
 	
 	UFUNCTION(BlueprintPure)
 	bool CanBeSliced();
-
-	virtual bool CanBeGrabbed(ACSCharacter* Character) const override;
+	
+	virtual bool TryGrab(AActor* Interactor) override;
 	virtual void Grab(ACSCharacter* Character) override;
 	
 protected:
@@ -47,4 +48,6 @@ protected:
 	
 	UPROPERTY()
 	ECSFoodItemState State;
+
+	void SetMeshByState(ECSFoodItemState NewState);
 };

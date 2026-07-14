@@ -90,5 +90,5 @@ void ACSTable::AttachActorToPlace(ACSGrabbableActor* ActorToPlace)
 	FAttachmentTransformRules AttachmentTransformRules =
 		FAttachmentTransformRules(EAttachmentRule::KeepWorld, true);
 	PlacedActor->AttachToComponent(ActorPlace.Get(), AttachmentTransformRules);
-	PlacedActor->MoveToPlace();
+	PlacedActor->MoveToPlace(FVector::ZeroVector);
 }

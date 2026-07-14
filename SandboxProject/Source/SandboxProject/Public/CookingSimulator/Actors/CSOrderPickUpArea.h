@@ -29,7 +29,7 @@ public:
 	
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category= "Settings")
-	TObjectPtr<UCSRecipeDefinition> RecipeForTest;
+	TArray<UCSRecipeDefinition*> RecipesForTest;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category= "Settings")
 	TObjectPtr<ACSPlateBox> ConnectedPlateBox;

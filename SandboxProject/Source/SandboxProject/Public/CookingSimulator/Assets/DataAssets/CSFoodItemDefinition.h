@@ -4,6 +4,8 @@
 #include "Engine/DataAsset.h"
 #include "CSFoodItemDefinition.generated.h"
 
+class ACSFoodItem;
+
 UCLASS()
 class SANDBOXPROJECT_API UCSFoodItemDefinition : public UPrimaryDataAsset
 {
@@ -20,8 +22,14 @@ public:
 	TObjectPtr<UStaticMesh> SlicedMesh;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category= "Settings")
-	TObjectPtr<UStaticMesh> OnPlateMesh;
+	TObjectPtr<UStaticMesh> FriedMesh;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category= "Settings")
-	TObjectPtr<UTexture> Icon;
+	TObjectPtr<UStaticMesh> InBurgerMesh;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category= "Settings")
+    TObjectPtr<UTexture> Icon;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category= "Settings")
+	TSubclassOf<ACSFoodItem> FoodItemClass;
 };

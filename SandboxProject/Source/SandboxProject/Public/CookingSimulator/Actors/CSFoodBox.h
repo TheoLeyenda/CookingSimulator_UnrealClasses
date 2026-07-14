@@ -18,9 +18,6 @@ public:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category= "Settings")
 	TObjectPtr<UCSFoodItemDefinition> FoodItemDefinition;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category= "Settings")
-	TSubclassOf<ACSFoodItem> FoodItemClass;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category= "Settings")
 	TObjectPtr<UMaterialInterface> FoodMaterial;

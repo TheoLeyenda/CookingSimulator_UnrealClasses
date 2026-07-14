@@ -14,6 +14,8 @@ class SANDBOXPROJECT_API ACSPlate : public ACSKitchenware
 
 public:
 	virtual bool TryAddItem(ACSFoodItem* FoodItem) override;
-	
+	virtual bool TryAddItems(TArray<ACSFoodItem*> FoodItems) override;
+	virtual void TryAddItemsToComplex(ACSFoodItem* FoodItem, bool& ShouldAddToKitchen, bool& Added) override;
+	virtual void IsComplexItemInside(bool& Exist, TObjectPtr<ACSFoodItem>& ComplexFoodItem);
 	TMap<UCSFoodItemDefinition*, FCSRecipeIngredient> GetIngredients();
 };

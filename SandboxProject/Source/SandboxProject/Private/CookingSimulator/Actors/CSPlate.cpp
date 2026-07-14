@@ -1,38 +1,75 @@
 #include "CookingSimulator/Actors/CSPlate.h"
+
+#include "CookingSimulator/Actors/CSComplexFoodItem.h"
 #include "CookingSimulator/Actors/CSFoodItem.h"
+#include "CookingSimulator/Components/CSFoodStorageComponent.h"
 
 bool ACSPlate::TryAddItem(ACSFoodItem* FoodItem)
 {
-	if(Super::TryAddItem(FoodItem))
-	{
-		FoodItem->SetState(ECSFoodItemState::OnPlate);
-		return true;
-	}
+	bool Exist;
+	TObjectPtr<ACSFoodItem> ComplexFoodItem;
+	IsComplexItemInside(Exist, ComplexFoodItem);
 
-	return false;
+	if(Exist)
+	{
+		if(auto* DishInterface = Cast<ICSDishInterface>(ComplexFoodItem))
+		{
+			return DishInterface->TryAddItem(FoodItem);
+		}
+	}
+	return Super::TryAddItem(FoodItem);
+}
+
+bool ACSPlate::TryAddItems(TArray<ACSFoodItem*> FoodItems)
+{
+	bool Exist;
+	TObjectPtr<ACSFoodItem> ComplexFoodItem;
+	IsComplexItemInside(Exist, ComplexFoodItem);
+
+	if(Exist)
+	{
+		if(auto* DishInterface = Cast<ICSDishInterface>(ComplexFoodItem))
+		{
+			return DishInterface->TryAddItems(FoodItems);
+		}
+	}
+	return Super::TryAddItems(FoodItems);
+}
+
+void ACSPlate::TryAddItemsToComplex(ACSFoodItem* FoodItem, bool& ShouldAddToKitchen, bool& Added)
+{
+	Super::TryAddItemsToComplex(FoodItem, ShouldAddToKitchen, Added);
+
+	if(Added)
+	{
+		ShouldAddToKitchen = true;
+	}
+	else
+	{
+		ShouldAddToKitchen = false;
+	}
 }
 
 TMap<UCSFoodItemDefinition*, FCSRecipeIngredient> ACSPlate::GetIngredients()
 {
-	TMap<UCSFoodItemDefinition*, FCSRecipeIngredient> PlateIngredients;
+	return FoodStorageComponent->GetIngredients();
+}
 
-	for (auto Element : FoodItems)
+void ACSPlate::IsComplexItemInside(bool& Exist, TObjectPtr<ACSFoodItem>& ComplexFoodItem)
+{
+	if(IsEmpty())
 	{
-		if(FCSRecipeIngredient* FoundItem = PlateIngredients.Find(Element->GetFoodItemDefinition()))
-		{
-			FCSRecipeIngredient RecipeIngredient = FCSRecipeIngredient();
-			RecipeIngredient.State = FoundItem->State;
-			RecipeIngredient.Amount = FoundItem->Amount + 1;
-			PlateIngredients.Add(Element->GetFoodItemDefinition(), RecipeIngredient);
-		}
-		else
-		{
-			FCSRecipeIngredient RecipeIngredient = FCSRecipeIngredient();
-			RecipeIngredient.State = Element->GetState();
-			RecipeIngredient.Amount = 1;
-			PlateIngredients.Add(Element->GetFoodItemDefinition(), RecipeIngredient);
-		}
+		Exist = false;
+		ComplexFoodItem = nullptr;
 	}
-
-	return PlateIngredients;
+	else if(ACSComplexFoodItem* InternalComplexFoodItem = Cast<ACSComplexFoodItem>(GetFoodItems()[0]))
+	{
+		Exist = true;
+		ComplexFoodItem = InternalComplexFoodItem;
+	}
+	else
+	{
+		Exist = false;
+		ComplexFoodItem = nullptr;
+	}
 }

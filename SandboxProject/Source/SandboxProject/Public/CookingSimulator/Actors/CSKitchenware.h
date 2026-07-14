@@ -7,6 +7,7 @@
 #include "CookingSimulator/Interfaces/CSDishInterface.h"
 #include "CSKitchenware.generated.h"
 
+class UCSFoodStorageComponent;
 /**
  * 
  */
@@ -20,20 +21,22 @@ public:
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category= "Components")
 	TObjectPtr<USceneComponent> FoodPlace; 
-	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category= "Settings", meta = (ClampMin = 1, ClampMax = 5))
-	int32 MaxItemsCount = 4;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category= "Settings")
-	TArray<ACSFoodItem*> FoodItems;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category= "Components")
+	TObjectPtr<UCSFoodStorageComponent> FoodStorageComponent;
 	
-	bool HasPlace() const;
-
+	bool HasPlace(int32 NewItemsAmount = 1) const;
 	bool IsEmpty() const;
 
 	virtual bool TryGrab(AActor* Interactor) override;
 	virtual bool TryAddItem(ACSFoodItem* FoodItem) override;
 	virtual bool TryAddItems(TArray<ACSFoodItem*> InFoodItems) override;
+	virtual void TryAddItemsToComplex(ACSFoodItem* FoodItem, bool& ShouldAddToKitchen, bool& Added);
+	
+	void AttachFoodItem(ACSFoodItem* FoodItem);
 
+	TArray<ACSFoodItem*>& GetFoodItems() const;
+	void ClearFoodItems();
+	
 	virtual void Destroyed() override;
 };

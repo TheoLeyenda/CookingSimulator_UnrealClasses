@@ -52,10 +52,10 @@ protected:
 	TObjectPtr<UInputAction> StopInteractionInputAction = nullptr;
 	
 	UPROPERTY(EditDefaultsOnly, Category= "Settings|Interact")
-	float SphereInteractDistance = 90.0f;
+	float SphereInteractDistance = 100.0f;
 
 	UPROPERTY(EditDefaultsOnly, Category= "Settings|Interact")
-	float SphereInteractRadius = 60.0f;
+	float SphereInteractRadius = 70.0f;
 
 	UPROPERTY(EditDefaultsOnly, Category= "Settings|Interact")
 	TEnumAsByte<ETraceTypeQuery> SphereInteractTraceChannel;
